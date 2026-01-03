@@ -1,0 +1,40 @@
+# Source files (we only publish dist/)
+nodes/
+credentials/
+*.ts
+!*.d.ts
+
+# Config files
+.eslintrc.js
+.prettierrc
+tsconfig.json
+gulpfile.js
+jest.config.js
+
+# Development
+.github/
+.vscode/
+.idea/
+
+# Tests
+__tests__/
+*.test.ts
+*.spec.ts
+coverage/
+.nyc_output/
+
+# Build scripts
+scripts/
+*.sh
+
+# Documentation (README is included)
+docs/
+CONTRIBUTING.md
+CHANGELOG.md
+
+# Misc
+.gitignore
+.editorconfig
+.env*
+*.log
+*.tgz
