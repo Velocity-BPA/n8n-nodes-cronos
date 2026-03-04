@@ -1,48 +1,31 @@
 {
-  "name": "n8n-nodes-cronos",
+  "name": "@velocity-bpa/n8n-nodes-cronos",
   "version": "1.0.0",
-  "description": "n8n community node for Cronos blockchain integration - accounts, transactions, smart contracts, tokens, NFTs, DeFi, and more",
-  "keywords": [
-    "n8n-community-node-package",
-    "n8n",
-    "cronos",
-    "blockchain",
-    "crypto",
-    "web3",
-    "evm",
-    "cro",
-    "defi",
-    "nft"
-  ],
-  "license": "BUSL-1.1",
-  "homepage": "https://velobpa.com",
-  "author": {
-    "name": "Velocity BPA, LLC",
-    "email": "support@velobpa.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Velocity-BPA/n8n-nodes-cronos.git"
-  },
+  "description": "n8n community node for Cronos",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "main": "dist/nodes/Cronos/Cronos.node.js",
   "engines": {
-    "node": ">=18.10",
-    "pnpm": ">=9.1"
+    "node": ">=18.0.0"
   },
   "packageManager": "pnpm@9.1.4",
-  "main": "dist/nodes/Cronos/Cronos.node.js",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
-    "format": "prettier --write .",
-    "lint": "eslint nodes credentials --ext .ts --fix",
-    "lintcheck": "eslint nodes credentials --ext .ts",
-    "prepublishOnly": "npm run build",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "format": "prettier nodes credentials --write",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "prepublishOnly": "npm run build"
   },
-  "files": [
-    "dist"
+  "keywords": [
+    "n8n-community-node-package",
+    "cronos",
+    "blockchain",
+    "crypto"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
@@ -50,24 +33,25 @@
       "dist/credentials/CronosApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/Cronos/Cronos.node.js",
-      "dist/nodes/Cronos/CronosTrigger.node.js"
+      "dist/nodes/Cronos/Cronos.node.js"
     ]
   },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.0",
+    "@types/jest": "^29.5.5",
+    "@types/node": "^20.8.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint": "^8.50.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.1",
     "gulp": "^4.0.2",
     "jest": "^29.7.0",
     "n8n-workflow": "*",
-    "prettier": "^3.2.0",
-    "ts-jest": "^29.1.2",
-    "typescript": "^5.3.3"
+    "prettier": "^3.0.3",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
   },
   "peerDependencies": {
     "n8n-workflow": "*"
