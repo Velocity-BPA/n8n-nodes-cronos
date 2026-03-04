@@ -1,6 +1,6 @@
 # n8n-nodes-cronos
 
-> [Velocity BPA Licensing Notice]
+> **[Velocity BPA Licensing Notice]**
 >
 > This n8n node is licensed under the Business Source License 1.1 (BSL 1.1).
 >
@@ -8,242 +8,203 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-![License: BSL 1.1](https://img.shields.io/badge/license-BSL--1.1-blue)
-![n8n](https://img.shields.io/badge/n8n-community%20node-orange)
-![Cronos](https://img.shields.io/badge/Cronos-EVM%20Chain-blue)
+An n8n community node for interacting with the Cronos blockchain network. This node provides 6 comprehensive resources for managing accounts, transactions, smart contracts, tokens, blocks, and network statistics, enabling seamless integration of Cronos blockchain operations into your n8n workflows.
 
-A comprehensive n8n community node for interacting with the Cronos blockchain. This node enables workflow automation for blockchain operations including account management, transactions, smart contracts, tokens, NFTs, DeFi protocols, and more.
+![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
+![License](https://img.shields.io/badge/license-BSL--1.1-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
+![Cronos](https://img.shields.io/badge/Cronos-Blockchain-purple)
+![Web3](https://img.shields.io/badge/Web3-Compatible-green)
+![EVM](https://img.shields.io/badge/EVM-Compatible-orange)
 
 ## Features
 
-### Resources & Operations
-
-**Accounts**
-- Get native CRO balance
-- Get ERC-20 token balances
-- Get NFT holdings (ERC-721/ERC-1155)
-- Get transaction history
-- Get token transfer history
-
-**Transactions**
-- Get transaction details
-- Get transaction receipt
-- Send transactions
-- Estimate gas
-- Get transaction status
-
-**Blocks**
-- Get block by number or hash
-- Get latest block
-- Get block transactions
-- Find block by timestamp
-
-**Smart Contracts**
-- Get contract ABI (verified contracts)
-- Read contract state
-- Write to contracts
-- Get contract source code
-- Query contract events
-- Deploy contracts
-
-**Tokens (ERC-20)**
-- Get token information
-- Get token holders
-- Get token transfers
-- Get token price
-- Get top tokens
-
-**NFTs (ERC-721/ERC-1155)**
-- Get NFT metadata
-- Get NFT transfers
-- Get collection information
-- Get NFT owners
-
-**DeFi**
-- Get protocol TVL
-- Get pool information
-- Get DEX statistics
-- Get yield farm data
-
-**Network**
-- Get network status
-- Get gas prices
-- Get validators
-- Get chain statistics
-
-**Events**
-- Get logs with filters
-- Subscribe to events
-- Filter and decode events
-
-**Utility**
-- Convert units (Wei/Gwei/CRO)
-- Encode function calls
-- Decode data
-- Check API health
-
-### Triggers
-
-- **New Block** - Trigger on new blocks
-- **Transaction To Address** - Trigger on incoming transactions
-- **Token Transfer** - Trigger on ERC-20 transfers
-- **Contract Event** - Trigger on smart contract events
-- **Large Transaction** - Trigger on transactions above threshold
+- **Account Management** - Query account balances, transaction history, and token holdings
+- **Transaction Operations** - Send transactions, query transaction details, and monitor confirmations
+- **Smart Contract Integration** - Deploy contracts, call functions, and monitor events
+- **Token Operations** - Transfer tokens, query metadata, and manage token approvals
+- **Block Explorer** - Retrieve block data, transaction lists, and network information
+- **Network Statistics** - Access real-time network stats, validator information, and staking data
+- **EVM Compatibility** - Full Ethereum Virtual Machine compatibility for seamless dApp integration
+- **Mainnet & Testnet Support** - Works with both Cronos mainnet and testnet environments
 
 ## Installation
 
 ### Community Nodes (Recommended)
 
-1. Open your n8n instance
-2. Go to **Settings** > **Community Nodes**
-3. Select **Install**
+1. Open n8n
+2. Go to **Settings** → **Community Nodes**
+3. Click **Install a community node**
 4. Enter `n8n-nodes-cronos`
-5. Accept the risks and install
+5. Click **Install**
 
 ### Manual Installation
 
 ```bash
-# Navigate to your n8n installation directory
 cd ~/.n8n
-
-# Install the node
-pnpm install n8n-nodes-cronos
-
-# Restart n8n
+npm install n8n-nodes-cronos
 ```
 
-## Configuration
+### Development Installation
 
-### Credentials Setup
+```bash
+git clone https://github.com/Velocity-BPA/n8n-nodes-cronos.git
+cd n8n-nodes-cronos
+npm install
+npm run build
+mkdir -p ~/.n8n/custom
+ln -s $(pwd) ~/.n8n/custom/n8n-nodes-cronos
+n8n start
+```
 
-1. Add new credentials: **Cronos API**
-2. Configure:
-   - **Network**: Select Mainnet or Testnet
-   - **RPC Endpoint** (optional): Custom RPC URL
-   - **Private Key** (optional): For signing transactions
-   - **Cronos Scan API Key** (optional): For enhanced rate limits
+## Credentials Setup
 
-### Network Information
+| Field | Description | Required |
+|-------|-------------|----------|
+| API Key | Your Cronos API key for authenticated requests | Yes |
+| Network | Select network (mainnet/testnet) | Yes |
+| RPC Endpoint | Custom RPC endpoint URL (optional) | No |
+| Private Key | Wallet private key for transaction signing | No* |
 
-| Network | Chain ID | RPC Endpoint | Explorer |
-|---------|----------|--------------|----------|
-| Mainnet | 25 | https://evm.cronos.org | https://cronoscan.com |
-| Testnet | 338 | https://evm-t3.cronos.org | https://testnet.cronoscan.com |
+*Required only for operations that modify blockchain state
+
+## Resources & Operations
+
+### 1. Account
+
+| Operation | Description |
+|-----------|-------------|
+| Get Balance | Retrieve CRO balance for an account |
+| Get Transaction History | List all transactions for an account |
+| Get Token Holdings | Get all token balances for an account |
+| Get Nonce | Get the current nonce for an account |
+| Get Account Info | Retrieve comprehensive account information |
+
+### 2. Transaction
+
+| Operation | Description |
+|-----------|-------------|
+| Send Transaction | Send CRO to another address |
+| Get Transaction | Retrieve transaction details by hash |
+| Get Receipt | Get transaction receipt and status |
+| Estimate Gas | Estimate gas required for a transaction |
+| Get Transaction Count | Get number of transactions for an address |
+| Wait for Confirmation | Wait for transaction confirmation |
+
+### 3. Smart Contract
+
+| Operation | Description |
+|-----------|-------------|
+| Deploy Contract | Deploy a new smart contract |
+| Call Function | Call a read-only contract function |
+| Send Transaction | Execute a state-changing contract function |
+| Get Events | Retrieve contract events and logs |
+| Get Code | Get contract bytecode |
+| Estimate Gas | Estimate gas for contract interaction |
+
+### 4. Token
+
+| Operation | Description |
+|-----------|-------------|
+| Transfer | Transfer tokens between addresses |
+| Get Balance | Get token balance for an address |
+| Get Metadata | Retrieve token name, symbol, and decimals |
+| Approve | Approve token spending allowance |
+| Get Allowance | Check approved spending allowance |
+| Get Total Supply | Get total token supply |
+
+### 5. Block
+
+| Operation | Description |
+|-----------|-------------|
+| Get Block | Retrieve block data by number or hash |
+| Get Latest Block | Get the most recent block |
+| Get Block Transactions | List all transactions in a block |
+| Get Block Range | Retrieve multiple blocks in a range |
+| Get Uncle Blocks | Get uncle blocks for a given block |
+
+### 6. Stats
+
+| Operation | Description |
+|-----------|-------------|
+| Get Network Stats | Retrieve current network statistics |
+| Get Gas Price | Get current recommended gas prices |
+| Get Validator Info | Get information about network validators |
+| Get Staking Stats | Retrieve staking and delegation statistics |
+| Get Network Health | Check overall network health metrics |
 
 ## Usage Examples
 
-### Get Account Balance
-
 ```javascript
-// Configure Cronos node
-Resource: Accounts
-Operation: Get Balance
-Address: 0x...your-address
+// Get account balance
+const balance = await this.helpers.request({
+  method: 'GET',
+  url: '/account/0x742d35Cc6323456A8014532E9da8f8E7f7D8C8E3/balance',
+  headers: {
+    'Authorization': `Bearer ${credentials.apiKey}`
+  }
+});
+
+// Send CRO transaction
+const transaction = await this.helpers.request({
+  method: 'POST',
+  url: '/transaction/send',
+  headers: {
+    'Authorization': `Bearer ${credentials.apiKey}`,
+    'Content-Type': 'application/json'
+  },
+  body: {
+    to: '0x8ba1f109551bD432803012645Hac136c22C07ce',
+    value: '1000000000000000000', // 1 CRO in wei
+    gasLimit: 21000
+  }
+});
+
+// Query smart contract
+const contractResult = await this.helpers.request({
+  method: 'POST',
+  url: '/contract/call',
+  headers: {
+    'Authorization': `Bearer ${credentials.apiKey}`,
+    'Content-Type': 'application/json'
+  },
+  body: {
+    address: '0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23',
+    method: 'balanceOf',
+    params: ['0x742d35Cc6323456A8014532E9da8f8E7f7D8C8E3']
+  }
+});
+
+// Get network statistics
+const stats = await this.helpers.request({
+  method: 'GET',
+  url: '/stats/network',
+  headers: {
+    'Authorization': `Bearer ${credentials.apiKey}`
+  }
+});
 ```
 
-### Read Smart Contract
+## Error Handling
 
-```javascript
-// Configure Cronos node
-Resource: Smart Contracts
-Operation: Read Contract
-Contract Address: 0x...token-address
-Function Name: balanceOf
-Parameters: ["0x...holder-address"]
-```
-
-### Monitor Token Transfers
-
-```javascript
-// Configure Cronos Trigger node
-Event: Token Transfer
-Token Address: 0x...token-contract
-To Address: 0x...your-address
-```
-
-## Known Contracts
-
-The node includes pre-configured support for popular Cronos contracts:
-
-| Token | Symbol | Address |
-|-------|--------|---------|
-| Wrapped CRO | WCRO | 0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23 |
-| USDC | USDC | 0xc21223249CA28397B4B6541dfFaEcC539BfF0c59 |
-| USDT | USDT | 0x66e428c3f67a68878562e79A0234c1F83c208770 |
-| DAI | DAI | 0xF2001B145b43032AAF5Ee2884e456CCd805F677D |
-| WETH | WETH | 0xe44Fd7fCb2b1581822D0c862B68222998a0c299a |
-| WBTC | WBTC | 0x062E66477Faf219F25D27dCED647BF57C3107d52 |
-
-**DeFi Protocols:**
-- VVS Finance Router: 0x145863Eb42Cf62847A6Ca784e6416C1682b1b2Ae
-- VVS Finance Factory: 0x3B44B2a187a7b3824131F8db5a74194D0a42Fc15
+| Error | Description | Solution |
+|-------|-------------|----------|
+| 401 Unauthorized | Invalid or missing API key | Verify API key in credentials |
+| 429 Rate Limited | Too many requests | Implement request throttling |
+| 404 Not Found | Resource doesn't exist | Verify addresses and transaction hashes |
+| 400 Bad Request | Invalid parameters | Check parameter format and values |
+| 500 Network Error | Cronos network issues | Retry request or check network status |
+| Gas Estimation Failed | Cannot estimate gas | Check contract address and method parameters |
 
 ## Development
 
-### Prerequisites
-
-- Node.js 18.10+
-- pnpm 9.1+
-
-### Setup
-
 ```bash
-# Clone the repository
-git clone https://github.com/velobpa/n8n-nodes-cronos.git
-cd n8n-nodes-cronos
-
-# Install dependencies
-pnpm install
-
-# Build
-pnpm build
-
-# Run tests
-pnpm test
-
-# Lint
-pnpm lint
+npm install
+npm run build
+npm test
+npm run lint
+npm run dev
 ```
-
-### Local Testing
-
-```bash
-# Link for local development
-cd n8n-nodes-cronos
-pnpm link --global
-
-# In your n8n installation
-cd ~/.n8n
-pnpm link --global n8n-nodes-cronos
-
-# Restart n8n
-```
-
-## API Rate Limits
-
-- **Cronos RPC**: No strict limits, but be reasonable
-- **Cronos Scan API**: 
-  - Without API key: 5 requests/second
-  - With API key: Higher limits (get key at https://cronoscan.com/apis)
-
-## Troubleshooting
-
-### Common Issues
-
-**"Invalid JSON RPC response"**
-- Check network connectivity
-- Verify RPC endpoint URL
-- Try alternative RPC endpoint
-
-**"Execution reverted"**
-- Contract function requirements not met
-- Insufficient gas
-- Invalid parameters
-
-**"Rate limit exceeded"**
-- Add Cronos Scan API key
-- Reduce request frequency
-- Implement delays between calls
 
 ## Author
 
@@ -259,43 +220,24 @@ This n8n community node is licensed under the **Business Source License 1.1**.
 Permitted for personal, educational, research, and internal business use.
 
 ### Commercial Use
-Use of this node within any SaaS, PaaS, hosted platform, managed service,
-or paid automation offering requires a commercial license.
+Use of this node within any SaaS, PaaS, hosted platform, managed service, or paid automation offering requires a commercial license.
 
-For licensing inquiries:
-**licensing@velobpa.com**
+For licensing inquiries: **licensing@velobpa.com**
 
 See [LICENSE](LICENSE), [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md), and [LICENSING_FAQ.md](LICENSING_FAQ.md) for details.
+
+## Contributing
+
+Contributions are welcome! Please ensure:
+
+1. Code follows existing style conventions
+2. All tests pass (`npm test`)
+3. Linting passes (`npm run lint`)
+4. Documentation is updated for new features
+5. Commit messages are descriptive
 
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-cronos/issues)
-- **Documentation**: [Cronos Docs](https://docs.cronos.org)
-- **n8n Community**: [n8n Community Forum](https://community.n8n.io)
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## Acknowledgments
-
-- [Cronos](https://cronos.org) for the EVM-compatible blockchain
-- [n8n](https://n8n.io) for the workflow automation platform
-- [Crypto.com](https://crypto.com) for the Cronos ecosystem
-
-## Changelog
-
-### 1.0.0
-
-- Initial release
-- 10 resources with 50+ operations
-- 5 trigger event types
-- Full Cronos mainnet and testnet support
-
----
-
-Built with ❤️ by [Velocity BPA](https://velobpa.com)
+- **Cronos Documentation**: [Cronos Developer Docs](https://docs.cronos.org/)
+- **Cronos Community**: [Cronos Discord](https://discord.gg/cronos)
