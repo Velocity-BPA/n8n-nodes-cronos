@@ -57,6 +57,10 @@ export class Cronos implements INodeType {
             value: 'transaction',
           },
           {
+            name: 'Block',
+            value: 'block',
+          },
+          {
             name: 'SmartContract',
             value: 'smartContract',
           },
@@ -65,8 +69,8 @@ export class Cronos implements INodeType {
             value: 'token',
           },
           {
-            name: 'Block',
-            value: 'block',
+            name: 'Network',
+            value: 'network',
           },
           {
             name: 'Stats',
@@ -117,6 +121,18 @@ export class Cronos implements INodeType {
       description: 'Get list of ERC-20 token transfer events by address',
       action: 'Get list of ERC-20 token transfer events by address',
     },
+    {
+      name: 'Get Transaction Count',
+      value: 'getTransactionCount',
+      description: 'Get nonce/transaction count for address',
+      action: 'Get transaction count',
+    },
+    {
+      name: 'Get Code',
+      value: 'getCode',
+      description: 'Get contract code at address',
+      action: 'Get code',
+    },
   ],
   default: 'getBalance',
 },
@@ -150,16 +166,22 @@ export class Cronos implements INodeType {
       action: 'Get transaction status',
     },
     {
-      name: 'Get Transaction Count',
-      value: 'getTransactionCount',
-      description: 'Returns number of transactions sent from an address',
-      action: 'Get transaction count',
-    },
-    {
       name: 'Send Raw Transaction',
       value: 'sendRawTransaction',
       description: 'Submits a pre-signed transaction for broadcast',
       action: 'Send raw transaction',
+    },
+    {
+      name: 'Estimate Gas',
+      value: 'estimateGas',
+      description: 'Estimate gas required for transaction',
+      action: 'Estimate gas',
+    },
+    {
+      name: 'Get Gas Price',
+      value: 'getGasPrice',
+      description: 'Get current gas price',
+      action: 'Get gas price',
     },
   ],
   default: 'getTransaction',
@@ -205,6 +227,24 @@ export class Cronos implements INodeType {
       description: 'Execute a message call transaction against a contract',
       action: 'Call contract',
     },
+    {
+      name: 'Call',
+      value: 'call',
+      description: 'Execute read-only contract function',
+      action: 'Call contract function',
+    },
+    {
+      name: 'Get Logs',
+      value: 'getLogs',
+      description: 'Get contract event logs with filters',
+      action: 'Get contract event logs',
+    },
+    {
+      name: 'Get Storage At',
+      value: 'getStorageAt',
+      description: 'Get contract storage value at position',
+      action: 'Get contract storage value',
+    },
   ],
   default: 'getContractAbi',
 },
@@ -249,6 +289,24 @@ export class Cronos implements INodeType {
       description: 'Get token holder list by contract address',
       action: 'Get token holders',
     },
+    {
+      name: 'Get Balance',
+      value: 'getBalance',
+      description: 'Get token balance via contract call',
+      action: 'Get token balance via contract call',
+    },
+    {
+      name: 'Get Token Metadata',
+      value: 'getMetadata',
+      description: 'Get token metadata (name, symbol, decimals)',
+      action: 'Get token metadata',
+    },
+    {
+      name: 'Get Transfer Events',
+      value: 'getTransferEvents',
+      description: 'Get token transfer events from logs',
+      action: 'Get transfer events',
+    },
   ],
   default: 'getTokenBalance',
 },
@@ -292,6 +350,24 @@ export class Cronos implements INodeType {
       value: 'getUncleBlock',
       description: 'Returns information about uncle block',
       action: 'Get uncle block',
+    },
+    {
+      name: 'Get Block Number',
+      value: 'getBlockNumber',
+      description: 'Get latest block number',
+      action: 'Get latest block number via RPC',
+    },
+    {
+      name: 'Get Block',
+      value: 'getBlock',
+      description: 'Get block details by number or hash',
+      action: 'Get block details',
+    },
+    {
+      name: 'Get Block Transaction Count',
+      value: 'getBlockTransactionCount',
+      description: 'Get transaction count in block',
+      action: 'Get block transaction count',
     },
   ],
   default: 'getLatestBlock',
@@ -339,6 +415,19 @@ export class Cronos implements INodeType {
     },
   ],
   default: 'getTotalSupply',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['network'] } },
+  options: [
+    { name: 'Get Chain ID', value: 'getChainId', description: 'Get Cronos chain ID', action: 'Get chain ID' },
+    { name: 'Get Sync Status', value: 'syncing', description: 'Get node synchronization status', action: 'Get sync status' },
+    { name: 'Get Protocol Version', value: 'getProtocolVersion', description: 'Get Ethereum protocol version', action: 'Get protocol version' }
+  ],
+  default: 'getChainId',
 },
       // Parameter definitions
 {
@@ -704,6 +793,23 @@ export class Cronos implements INodeType {
   description: 'Sort order',
 },
 {
+  displayName: 'Address',
+  name: 'address',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['account'], operation: ['getTransactionCount', 'getCode'] } },
+  default: '',
+  description: 'The address to query (must be a valid hex string)',
+},
+{
+  displayName: 'Block',
+  name: 'block',
+  type: 'string',
+  displayOptions: { show: { resource: ['account'], operation: ['getTransactionCount', 'getCode'] } },
+  default: 'latest',
+  description: 'Block number as hex, "latest", "earliest", or "pending"',
+},
+{
   displayName: 'Transaction Hash',
   name: 'txhash',
   type: 'string',
@@ -746,34 +852,6 @@ export class Cronos implements INodeType {
   description: 'The transaction hash to check status for',
 },
 {
-  displayName: 'Address',
-  name: 'address',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['transaction'],
-      operation: ['getTransactionCount'],
-    },
-  },
-  default: '',
-  description: 'The address to get transaction count for',
-},
-{
-  displayName: 'Tag',
-  name: 'tag',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['transaction'],
-      operation: ['getTransactionCount'],
-    },
-  },
-  default: 'latest',
-  description: 'The block tag (latest, earliest, pending, or block number)',
-},
-{
   displayName: 'Raw Transaction Hex',
   name: 'hex',
   type: 'string',
@@ -786,6 +864,86 @@ export class Cronos implements INodeType {
   },
   default: '',
   description: 'The signed transaction hex string to broadcast',
+},
+{
+  displayName: 'Signed Transaction',
+  name: 'signedTransaction',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['transaction'], operation: ['sendRawTransaction'] } },
+  default: '',
+  description: 'The signed transaction data as a hex string',
+  placeholder: '0x...',
+},
+{
+  displayName: 'Transaction Hash',
+  name: 'transactionHash',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['transaction'], operation: ['getTransaction', 'getTransactionReceipt'] } },
+  default: '',
+  description: 'The transaction hash to retrieve',
+  placeholder: '0x...',
+},
+{
+  displayName: 'From Address',
+  name: 'fromAddress',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['transaction'], operation: ['estimateGas'] } },
+  default: '',
+  description: 'The address the transaction is sent from',
+  placeholder: '0x...',
+},
+{
+  displayName: 'To Address',
+  name: 'toAddress',
+  type: 'string',
+  required: false,
+  displayOptions: { show: { resource: ['transaction'], operation: ['estimateGas'] } },
+  default: '',
+  description: 'The address the transaction is directed to',
+  placeholder: '0x...',
+},
+{
+  displayName: 'Value',
+  name: 'value',
+  type: 'string',
+  required: false,
+  displayOptions: { show: { resource: ['transaction'], operation: ['estimateGas'] } },
+  default: '',
+  description: 'Integer of the value sent with this transaction (in wei)',
+  placeholder: '0x0',
+},
+{
+  displayName: 'Gas',
+  name: 'gas',
+  type: 'string',
+  required: false,
+  displayOptions: { show: { resource: ['transaction'], operation: ['estimateGas'] } },
+  default: '',
+  description: 'Integer of the gas provided for the transaction execution',
+  placeholder: '0x5208',
+},
+{
+  displayName: 'Gas Price',
+  name: 'gasPrice',
+  type: 'string',
+  required: false,
+  displayOptions: { show: { resource: ['transaction'], operation: ['estimateGas'] } },
+  default: '',
+  description: 'Integer of the gasPrice used for each paid gas',
+  placeholder: '0x9184e72a000',
+},
+{
+  displayName: 'Data',
+  name: 'data',
+  type: 'string',
+  required: false,
+  displayOptions: { show: { resource: ['transaction'], operation: ['estimateGas'] } },
+  default: '',
+  description: 'Hash of the method signature and encoded parameters',
+  placeholder: '0x...',
 },
 {
   displayName: 'Contract Address',
@@ -933,6 +1091,66 @@ export class Cronos implements INodeType {
   description: 'The block tag to execute the call against',
 },
 {
+  displayName: 'Transaction Object',
+  name: 'transaction',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['smartContract'], operation: ['call'] } },
+  default: '{"to":"0x...","data":"0x..."}',
+  description: 'The transaction call object with to, data, from (optional), gas (optional), gasPrice (optional), value (optional)',
+},
+{
+  displayName: 'Block Parameter',
+  name: 'block',
+  type: 'string',
+  displayOptions: { show: { resource: ['smartContract'], operation: ['call'] } },
+  default: 'latest',
+  description: 'Block number (hex), "latest", "earliest", or "pending"',
+},
+{
+  displayName: 'From Block',
+  name: 'fromBlock',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['smartContract'], operation: ['getLogs'] } },
+  default: 'latest',
+  description: 'Starting block number (hex), "latest", "earliest", or "pending"',
+},
+{
+  displayName: 'To Block',
+  name: 'toBlock',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['smartContract'], operation: ['getLogs'] } },
+  default: 'latest',
+  description: 'Ending block number (hex), "latest", "earliest", or "pending"',
+},
+{
+  displayName: 'Contract Address',
+  name: 'address',
+  type: 'string',
+  displayOptions: { show: { resource: ['smartContract'], operation: ['getLogs', 'getStorageAt'] } },
+  default: '',
+  description: 'Contract address to filter logs from or get storage from',
+},
+{
+  displayName: 'Topics',
+  name: 'topics',
+  type: 'json',
+  displayOptions: { show: { resource: ['smartContract'], operation: ['getLogs'] } },
+  default: '[]',
+  description: 'Array of 32-byte DATA topics. Topics are order-dependent',
+},
+{
+  displayName: 'Storage Position',
+  name: 'position',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['smartContract'], operation: ['getStorageAt'] } },
+  default: '0x0',
+  description: 'The position (hex string) in the storage',
+},
+{
   displayName: 'Contract Address',
   name: 'contractAddress',
   type: 'string',
@@ -1063,6 +1281,108 @@ export class Cronos implements INodeType {
   description: 'Sort order for results',
 },
 {
+	displayName: 'Contract Address',
+	name: 'contractAddress',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['token'],
+			operation: ['getBalance', 'getMetadata'],
+		},
+	},
+	default: '',
+	placeholder: '0x...',
+	description: 'The ERC-20/CRC-20 token contract address',
+},
+{
+	displayName: 'Method Call',
+	name: 'methodCall',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['token'],
+			operation: ['getBalance', 'getMetadata'],
+		},
+	},
+	default: '',
+	placeholder: '0x...',
+	description: 'The encoded method call data for the contract function',
+},
+{
+	displayName: 'Block',
+	name: 'block',
+	type: 'string',
+	displayOptions: {
+		show: {
+			resource: ['token'],
+			operation: ['getBalance', 'getMetadata'],
+		},
+	},
+	default: 'latest',
+	placeholder: 'latest, earliest, pending, or hex block number',
+	description: 'Block number to query (latest, earliest, pending, or hex number)',
+},
+{
+	displayName: 'From Block',
+	name: 'fromBlock',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['token'],
+			operation: ['getTransferEvents'],
+		},
+	},
+	default: 'latest',
+	placeholder: 'latest, earliest, or hex block number',
+	description: 'Starting block number for log search',
+},
+{
+	displayName: 'To Block',
+	name: 'toBlock',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['token'],
+			operation: ['getTransferEvents'],
+		},
+	},
+	default: 'latest',
+	placeholder: 'latest, earliest, or hex block number',
+	description: 'Ending block number for log search',
+},
+{
+	displayName: 'Contract Address',
+	name: 'address',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['token'],
+			operation: ['getTransferEvents'],
+		},
+	},
+	default: '',
+	placeholder: '0x...',
+	description: 'Token contract address to filter logs',
+},
+{
+	displayName: 'Transfer Topics',
+	name: 'transferTopics',
+	type: 'json',
+	displayOptions: {
+		show: {
+			resource: ['token'],
+			operation: ['getTransferEvents'],
+		},
+	},
+	default: '["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"]',
+	description: 'Topics array for filtering transfer events (JSON array format)',
+},
+{
   displayName: 'Block Number',
   name: 'tag',
   type: 'string',
@@ -1168,6 +1488,47 @@ export class Cronos implements INodeType {
   default: '0x0',
   description: 'The uncle block index position in hex format',
 },
+{
+  displayName: 'Block Number/Hash',
+  name: 'blockNumber',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlock']
+    }
+  },
+  default: 'latest',
+  description: 'Block number (hex format), hash, or one of: "latest", "earliest", "pending"',
+},
+{
+  displayName: 'Include Transactions',
+  name: 'includeTransactions',
+  type: 'boolean',
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlock']
+    }
+  },
+  default: false,
+  description: 'Whether to include full transaction objects or just transaction hashes',
+},
+{
+  displayName: 'Block Number/Hash',
+  name: 'blockNumber',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockTransactionCount']
+    }
+  },
+  default: 'latest',
+  description: 'Block number (hex format), hash, or one of: "latest", "earliest", "pending"',
+},
     ],
   };
 
@@ -1188,6 +1549,8 @@ export class Cronos implements INodeType {
         return [await executeBlockOperations.call(this, items)];
       case 'stats':
         return [await executeStatsOperations.call(this, items)];
+      case 'network':
+        return [await executeNetworkOperations.call(this, items)];
       default:
         throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not supported`);
     }
@@ -1349,6 +1712,64 @@ async function executeAccountOperations(
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
+
+        case 'getTransactionCount': {
+          const address = this.getNodeParameter('address', i) as string;
+          const block = this.getNodeParameter('block', i) as string;
+
+          const requestBody = {
+            jsonrpc: '2.0',
+            method: 'eth_getTransactionCount',
+            params: [address, block],
+            id: 1,
+          };
+
+          const options: any = {
+            method: 'POST',
+            url: credentials.baseUrl || 'https://evm.cronos.org',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+            json: true,
+          };
+
+          if (credentials.apiKey) {
+            options.headers['Authorization'] = `Bearer ${credentials.apiKey}`;
+          }
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getCode': {
+          const address = this.getNodeParameter('address', i) as string;
+          const block = this.getNodeParameter('block', i) as string;
+
+          const requestBody = {
+            jsonrpc: '2.0',
+            method: 'eth_getCode',
+            params: [address, block],
+            id: 1,
+          };
+
+          const options: any = {
+            method: 'POST',
+            url: credentials.baseUrl || 'https://evm.cronos.org',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+            json: true,
+          };
+
+          if (credentials.apiKey) {
+            options.headers['Authorization'] = `Bearer ${credentials.apiKey}`;
+          }
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
         
         default:
           throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
@@ -1431,40 +1852,108 @@ async function executeTransactionOperations(
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-        
-        case 'getTransactionCount': {
-          const address = this.getNodeParameter('address', i) as string;
-          const tag = this.getNodeParameter('tag', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/api`,
-            qs: {
-              module: 'proxy',
-              action: 'eth_getTransactionCount',
-              address: address,
-              tag: tag,
-              apikey: credentials.apiKey,
+
+        case 'sendRawTransaction': {
+          const hex = this.getNodeParameter('hex', i, '') as string;
+          const signedTransaction = this.getNodeParameter('signedTransaction', i, '') as string;
+          
+          // Use hex parameter if available, otherwise use signedTransaction
+          const transactionHex = hex || signedTransaction;
+          
+          let rpcId = Math.floor(Math.random() * 10000);
+
+          const baseOptions: any = {
+            method: 'POST',
+            url: credentials.baseUrl || 'https://evm.cronos.org',
+            headers: {
+              'Content-Type': 'application/json',
             },
             json: true,
           };
-          result = await this.helpers.httpRequest(options) as any;
+
+          if (credentials.apiKey) {
+            baseOptions.headers['Authorization'] = `Bearer ${credentials.apiKey}`;
+          }
+
+          baseOptions.body = {
+            jsonrpc: '2.0',
+            method: 'eth_sendRawTransaction',
+            params: [transactionHex],
+            id: rpcId,
+          };
+
+          result = await this.helpers.httpRequest(baseOptions) as any;
           break;
         }
-        
-        case 'sendRawTransaction': {
-          const hex = this.getNodeParameter('hex', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/api`,
-            qs: {
-              module: 'proxy',
-              action: 'eth_sendRawTransaction',
-              hex: hex,
-              apikey: credentials.apiKey,
+
+        case 'estimateGas': {
+          const fromAddress = this.getNodeParameter('fromAddress', i) as string;
+          const toAddress = this.getNodeParameter('toAddress', i, '') as string;
+          const value = this.getNodeParameter('value', i, '0x0') as string;
+          const gas = this.getNodeParameter('gas', i, '') as string;
+          const gasPrice = this.getNodeParameter('gasPrice', i, '') as string;
+          const data = this.getNodeParameter('data', i, '') as string;
+
+          const transactionObject: any = {
+            from: fromAddress,
+          };
+
+          if (toAddress) transactionObject.to = toAddress;
+          if (value) transactionObject.value = value;
+          if (gas) transactionObject.gas = gas;
+          if (gasPrice) transactionObject.gasPrice = gasPrice;
+          if (data) transactionObject.data = data;
+          
+          let rpcId = Math.floor(Math.random() * 10000);
+
+          const baseOptions: any = {
+            method: 'POST',
+            url: credentials.baseUrl || 'https://evm.cronos.org',
+            headers: {
+              'Content-Type': 'application/json',
             },
             json: true,
           };
-          result = await this.helpers.httpRequest(options) as any;
+
+          if (credentials.apiKey) {
+            baseOptions.headers['Authorization'] = `Bearer ${credentials.apiKey}`;
+          }
+
+          baseOptions.body = {
+            jsonrpc: '2.0',
+            method: 'eth_estimateGas',
+            params: [transactionObject],
+            id: rpcId,
+          };
+
+          result = await this.helpers.httpRequest(baseOptions) as any;
+          break;
+        }
+
+        case 'getGasPrice': {
+          let rpcId = Math.floor(Math.random() * 10000);
+
+          const baseOptions: any = {
+            method: 'POST',
+            url: credentials.baseUrl || 'https://evm.cronos.org',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            json: true,
+          };
+
+          if (credentials.apiKey) {
+            baseOptions.headers['Authorization'] = `Bearer ${credentials.apiKey}`;
+          }
+
+          baseOptions.body = {
+            jsonrpc: '2.0',
+            method: 'eth_gasPrice',
+            params: [],
+            id: rpcId,
+          };
+
+          result = await this.helpers.httpRequest(baseOptions) as any;
           break;
         }
         
@@ -1474,6 +1963,14 @@ async function executeTransactionOperations(
 
       if (result && result.status === '0' && result.message) {
         throw new NodeApiError(this.getNode(), { message: result.message, result });
+      }
+
+      if (result && result.error) {
+        throw new NodeOperationError(
+          this.getNode(),
+          `Cronos RPC Error: ${result.error.message}`,
+          { itemIndex: i },
+        );
       }
 
       returnData.push({ json: result, pairedItem: { item: i } });
@@ -1556,504 +2053,4 @@ async function executeSmartContractOperations(
         case 'verifySourceCode': {
           const contractaddress = this.getNodeParameter('contractaddress', i) as string;
           const sourceCode = this.getNodeParameter('sourceCode', i) as string;
-          const contractname = this.getNodeParameter('contractname', i) as string;
-          const compilerversion = this.getNodeParameter('compilerversion', i) as string;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/api`,
-            form: {
-              module: 'contract',
-              action: 'verifysourcecode',
-              contractaddress: contractaddress,
-              sourceCode: sourceCode,
-              contractname: contractname,
-              compilerversion: compilerversion,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          
-          if (result.status !== '1') {
-            throw new NodeApiError(this.getNode(), result, {
-              message: result.message || 'Failed to verify source code',
-              description: `Error verifying source code for contract ${contractaddress}`,
-            });
-          }
-          break;
-        }
-
-        case 'checkVerificationStatus': {
-          const guid = this.getNodeParameter('guid', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api`,
-            qs: {
-              module: 'contract',
-              action: 'checkverifystatus',
-              guid: guid,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'callContract': {
-          const to = this.getNodeParameter('to', i) as string;
-          const data = this.getNodeParameter('data', i) as string;
-          const tag = this.getNodeParameter('tag', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api`,
-            qs: {
-              module: 'proxy',
-              action: 'eth_call',
-              to: to,
-              data: data,
-              tag: tag,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          
-          if (result.error) {
-            throw new NodeApiError(this.getNode(), result, {
-              message: result.error.message || 'Contract call failed',
-              description: `Error calling contract ${to}`,
-            });
-          }
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeTokenOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('cronosApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'getTokenBalance': {
-          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
-          const address = this.getNodeParameter('address', i) as string;
-          const tag = this.getNodeParameter('tag', i) as string;
-
-          const params = new URLSearchParams({
-            module: 'account',
-            action: 'tokenbalance',
-            contractaddress: contractAddress,
-            address: address,
-            tag: tag,
-            apikey: credentials.apiKey,
-          });
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl || 'https://cronos.org/explorer/api'}?${params.toString()}`,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getTokenTransfers': {
-          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
-          const address = this.getNodeParameter('address', i) as string;
-          const page = this.getNodeParameter('page', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-          const startBlock = this.getNodeParameter('startBlock', i) as number;
-          const endBlock = this.getNodeParameter('endBlock', i) as string;
-          const sort = this.getNodeParameter('sort', i) as string;
-
-          const params = new URLSearchParams({
-            module: 'account',
-            action: 'tokentx',
-            contractaddress: contractAddress,
-            address: address,
-            page: page.toString(),
-            offset: offset.toString(),
-            startblock: startBlock.toString(),
-            endblock: endBlock,
-            sort: sort,
-            apikey: credentials.apiKey,
-          });
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl || 'https://cronos.org/explorer/api'}?${params.toString()}`,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getNftTransfers': {
-          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
-          const address = this.getNodeParameter('address', i) as string;
-          const page = this.getNodeParameter('page', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-          const startBlock = this.getNodeParameter('startBlock', i) as number;
-          const endBlock = this.getNodeParameter('endBlock', i) as string;
-          const sort = this.getNodeParameter('sort', i) as string;
-
-          const params = new URLSearchParams({
-            module: 'account',
-            action: 'tokennfttx',
-            contractaddress: contractAddress,
-            address: address,
-            page: page.toString(),
-            offset: offset.toString(),
-            startblock: startBlock.toString(),
-            endblock: endBlock,
-            sort: sort,
-            apikey: credentials.apiKey,
-          });
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl || 'https://cronos.org/explorer/api'}?${params.toString()}`,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getTokenInfo': {
-          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
-
-          const params = new URLSearchParams({
-            module: 'token',
-            action: 'tokeninfo',
-            contractaddress: contractAddress,
-            apikey: credentials.apiKey,
-          });
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl || 'https://cronos.org/explorer/api'}?${params.toString()}`,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getTokenHolders': {
-          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
-          const page = this.getNodeParameter('page', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-
-          const params = new URLSearchParams({
-            module: 'token',
-            action: 'tokenholderlist',
-            contractaddress: contractAddress,
-            page: page.toString(),
-            offset: offset.toString(),
-            apikey: credentials.apiKey,
-          });
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl || 'https://cronos.org/explorer/api'}?${params.toString()}`,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      if (result.status === '0') {
-        throw new NodeApiError(this.getNode(), result, {
-          message: result.message || 'API request failed',
-        });
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeBlockOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('cronosApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      const baseUrl = 'https://cronos.org/explorer/api';
-
-      switch (operation) {
-        case 'getLatestBlock': {
-          const options: any = {
-            method: 'GET',
-            url: baseUrl,
-            qs: {
-              module: 'proxy',
-              action: 'eth_blockNumber',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockByNumber': {
-          const tag = this.getNodeParameter('tag', i) as string;
-          const fullTx = this.getNodeParameter('boolean', i) as boolean;
-          
-          const options: any = {
-            method: 'GET',
-            url: baseUrl,
-            qs: {
-              module: 'proxy',
-              action: 'eth_getBlockByNumber',
-              tag: tag,
-              boolean: fullTx.toString(),
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockReward': {
-          const blockno = this.getNodeParameter('blockno', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: baseUrl,
-            qs: {
-              module: 'block',
-              action: 'getblockreward',
-              blockno: blockno,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockByTimestamp': {
-          const timestamp = this.getNodeParameter('timestamp', i) as string;
-          const closest = this.getNodeParameter('closest', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: baseUrl,
-            qs: {
-              module: 'block',
-              action: 'getblocknobytime',
-              timestamp: timestamp,
-              closest: closest,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getUncleBlock': {
-          const tag = this.getNodeParameter('tag', i) as string;
-          const index = this.getNodeParameter('index', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: baseUrl,
-            qs: {
-              module: 'proxy',
-              action: 'eth_getUncleByBlockNumberAndIndex',
-              tag: tag,
-              index: index,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw new NodeApiError(this.getNode(), error);
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeStatsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('cronosApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'getTotalSupply': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api`,
-            qs: {
-              module: 'stats',
-              action: 'tokensupply',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getCronosSupply': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api`,
-            qs: {
-              module: 'stats',
-              action: 'cronosupply',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getCronoPrice': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api`,
-            qs: {
-              module: 'stats',
-              action: 'cronoprice',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getNodeCount': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api`,
-            qs: {
-              module: 'stats',
-              action: 'nodecount',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getGasPrice': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api`,
-            qs: {
-              module: 'proxy',
-              action: 'eth_gasPrice',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
-
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        throw new NodeApiError(this.getNode(), error);
-      }
-    }
-  }
-
-  return returnData;
-}
+          const contractname =
