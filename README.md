@@ -8,25 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-An n8n community node for interacting with the Cronos blockchain network. This node provides 6 comprehensive resources for managing accounts, transactions, smart contracts, tokens, blocks, and network statistics, enabling seamless integration of Cronos blockchain operations into your n8n workflows.
+A comprehensive n8n community node for interacting with the Cronos blockchain ecosystem. This node provides 6 resources with full CRUD capabilities, enabling seamless integration with accounts, transactions, blocks, smart contracts, tokens, and network operations for building powerful blockchain automation workflows.
 
 ![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
 ![Cronos](https://img.shields.io/badge/Cronos-Blockchain-purple)
 ![Web3](https://img.shields.io/badge/Web3-Compatible-green)
-![EVM](https://img.shields.io/badge/EVM-Compatible-orange)
+![DeFi](https://img.shields.io/badge/DeFi-Ready-orange)
 
 ## Features
 
-- **Account Management** - Query account balances, transaction history, and token holdings
-- **Transaction Operations** - Send transactions, query transaction details, and monitor confirmations
-- **Smart Contract Integration** - Deploy contracts, call functions, and monitor events
-- **Token Operations** - Transfer tokens, query metadata, and manage token approvals
-- **Block Explorer** - Retrieve block data, transaction lists, and network information
-- **Network Statistics** - Access real-time network stats, validator information, and staking data
-- **EVM Compatibility** - Full Ethereum Virtual Machine compatibility for seamless dApp integration
-- **Mainnet & Testnet Support** - Works with both Cronos mainnet and testnet environments
+- **Account Management** - Create, query, and manage Cronos blockchain accounts with balance tracking
+- **Transaction Operations** - Send, monitor, and analyze blockchain transactions with full details
+- **Block Explorer** - Access and query block data, including block height, timestamps, and transaction lists
+- **Smart Contract Integration** - Deploy, interact with, and monitor smart contracts on Cronos network
+- **Token Operations** - Manage CRC-20 tokens, transfers, and balance queries across the ecosystem
+- **Network Monitoring** - Real-time network status, gas prices, and validator information
+- **Comprehensive Error Handling** - Robust error management with detailed blockchain-specific error codes
+- **High Performance** - Optimized for high-throughput blockchain operations with connection pooling
 
 ## Installation
 
@@ -61,12 +61,10 @@ n8n start
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| API Key | Your Cronos API key for authenticated requests | Yes |
-| Network | Select network (mainnet/testnet) | Yes |
-| RPC Endpoint | Custom RPC endpoint URL (optional) | No |
-| Private Key | Wallet private key for transaction signing | No* |
-
-*Required only for operations that modify blockchain state
+| API Key | Your Cronos API key for blockchain access | Yes |
+| API Endpoint | Custom RPC endpoint (optional, defaults to mainnet) | No |
+| Network | Network selection (mainnet, testnet) | Yes |
+| Timeout | Request timeout in seconds (default: 30) | No |
 
 ## Resources & Operations
 
@@ -74,127 +72,119 @@ n8n start
 
 | Operation | Description |
 |-----------|-------------|
-| Get Balance | Retrieve CRO balance for an account |
-| Get Transaction History | List all transactions for an account |
-| Get Token Holdings | Get all token balances for an account |
-| Get Nonce | Get the current nonce for an account |
-| Get Account Info | Retrieve comprehensive account information |
+| Get Balance | Retrieve account balance in CRO and other tokens |
+| Get Account Info | Fetch detailed account information including nonce and transaction history |
+| Create Account | Generate new Cronos account with private/public key pair |
+| Import Account | Import existing account using private key or mnemonic |
+| Get Transaction History | List all transactions for a specific account |
 
 ### 2. Transaction
 
 | Operation | Description |
 |-----------|-------------|
-| Send Transaction | Send CRO to another address |
+| Send Transaction | Send CRO or tokens to another address |
 | Get Transaction | Retrieve transaction details by hash |
-| Get Receipt | Get transaction receipt and status |
-| Estimate Gas | Estimate gas required for a transaction |
-| Get Transaction Count | Get number of transactions for an address |
-| Wait for Confirmation | Wait for transaction confirmation |
+| Get Transaction Receipt | Get transaction receipt and execution status |
+| List Transactions | Query transactions with filters (block range, address, etc.) |
+| Estimate Gas | Calculate gas costs for transaction execution |
+| Get Transaction Status | Check if transaction is pending, confirmed, or failed |
 
-### 3. Smart Contract
-
-| Operation | Description |
-|-----------|-------------|
-| Deploy Contract | Deploy a new smart contract |
-| Call Function | Call a read-only contract function |
-| Send Transaction | Execute a state-changing contract function |
-| Get Events | Retrieve contract events and logs |
-| Get Code | Get contract bytecode |
-| Estimate Gas | Estimate gas for contract interaction |
-
-### 4. Token
+### 3. Block
 
 | Operation | Description |
 |-----------|-------------|
-| Transfer | Transfer tokens between addresses |
-| Get Balance | Get token balance for an address |
-| Get Metadata | Retrieve token name, symbol, and decimals |
-| Approve | Approve token spending allowance |
-| Get Allowance | Check approved spending allowance |
-| Get Total Supply | Get total token supply |
+| Get Block | Retrieve block information by number or hash |
+| Get Latest Block | Fetch the most recent block on the network |
+| Get Block Transactions | List all transactions within a specific block |
+| Get Block Range | Retrieve multiple blocks within a specified range |
+| Search Blocks | Search blocks by timestamp or transaction count |
 
-### 5. Block
-
-| Operation | Description |
-|-----------|-------------|
-| Get Block | Retrieve block data by number or hash |
-| Get Latest Block | Get the most recent block |
-| Get Block Transactions | List all transactions in a block |
-| Get Block Range | Retrieve multiple blocks in a range |
-| Get Uncle Blocks | Get uncle blocks for a given block |
-
-### 6. Stats
+### 4. SmartContract
 
 | Operation | Description |
 |-----------|-------------|
-| Get Network Stats | Retrieve current network statistics |
-| Get Gas Price | Get current recommended gas prices |
-| Get Validator Info | Get information about network validators |
-| Get Staking Stats | Retrieve staking and delegation statistics |
-| Get Network Health | Check overall network health metrics |
+| Deploy Contract | Deploy smart contract bytecode to Cronos network |
+| Call Function | Execute read-only smart contract function |
+| Send Transaction | Execute state-changing smart contract function |
+| Get Contract Info | Retrieve contract details including ABI and bytecode |
+| Get Contract Events | Query contract event logs with filtering |
+| Verify Contract | Verify contract source code on block explorer |
+
+### 5. Token
+
+| Operation | Description |
+|-----------|-------------|
+| Get Token Info | Retrieve token metadata (name, symbol, decimals, supply) |
+| Get Token Balance | Check token balance for specific address |
+| Transfer Tokens | Send CRC-20 tokens between addresses |
+| Get Token Transactions | List token transfer history |
+| Get Token Holders | Retrieve list of token holders and balances |
+| Get Token Price | Fetch current token price and market data |
+
+### 6. Network
+
+| Operation | Description |
+|-----------|-------------|
+| Get Network Status | Current network health and sync status |
+| Get Gas Price | Current recommended gas prices for transactions |
+| Get Validator Info | Information about network validators and staking |
+| Get Network Stats | Network statistics including total transactions and accounts |
+| Get Chain Info | Chain ID, network version, and protocol details |
 
 ## Usage Examples
 
 ```javascript
 // Get account balance
-const balance = await this.helpers.request({
-  method: 'GET',
-  url: '/account/0x742d35Cc6323456A8014532E9da8f8E7f7D8C8E3/balance',
-  headers: {
-    'Authorization': `Bearer ${credentials.apiKey}`
-  }
-});
+{
+  "resource": "account",
+  "operation": "getBalance",
+  "address": "0x1234567890123456789012345678901234567890"
+}
+```
 
+```javascript
 // Send CRO transaction
-const transaction = await this.helpers.request({
-  method: 'POST',
-  url: '/transaction/send',
-  headers: {
-    'Authorization': `Bearer ${credentials.apiKey}`,
-    'Content-Type': 'application/json'
-  },
-  body: {
-    to: '0x8ba1f109551bD432803012645Hac136c22C07ce',
-    value: '1000000000000000000', // 1 CRO in wei
-    gasLimit: 21000
-  }
-});
+{
+  "resource": "transaction",
+  "operation": "sendTransaction",
+  "from": "0xSenderAddress",
+  "to": "0xRecipientAddress", 
+  "amount": "1.5",
+  "gasLimit": "21000"
+}
+```
 
-// Query smart contract
-const contractResult = await this.helpers.request({
-  method: 'POST',
-  url: '/contract/call',
-  headers: {
-    'Authorization': `Bearer ${credentials.apiKey}`,
-    'Content-Type': 'application/json'
-  },
-  body: {
-    address: '0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23',
-    method: 'balanceOf',
-    params: ['0x742d35Cc6323456A8014532E9da8f8E7f7D8C8E3']
-  }
-});
+```javascript
+// Call smart contract function
+{
+  "resource": "smartContract",
+  "operation": "callFunction",
+  "contractAddress": "0xContractAddress",
+  "functionName": "balanceOf",
+  "parameters": ["0xUserAddress"],
+  "abi": [{"name": "balanceOf", "type": "function", "inputs": [{"name": "account", "type": "address"}]}]
+}
+```
 
-// Get network statistics
-const stats = await this.helpers.request({
-  method: 'GET',
-  url: '/stats/network',
-  headers: {
-    'Authorization': `Bearer ${credentials.apiKey}`
-  }
-});
+```javascript
+// Get token information
+{
+  "resource": "token",
+  "operation": "getTokenInfo",
+  "tokenAddress": "0xTokenContractAddress"
+}
 ```
 
 ## Error Handling
 
 | Error | Description | Solution |
 |-------|-------------|----------|
-| 401 Unauthorized | Invalid or missing API key | Verify API key in credentials |
-| 429 Rate Limited | Too many requests | Implement request throttling |
-| 404 Not Found | Resource doesn't exist | Verify addresses and transaction hashes |
-| 400 Bad Request | Invalid parameters | Check parameter format and values |
-| 500 Network Error | Cronos network issues | Retry request or check network status |
-| Gas Estimation Failed | Cannot estimate gas | Check contract address and method parameters |
+| Invalid API Key | Authentication failed with provided API key | Verify API key in credentials and check permissions |
+| Insufficient Funds | Account balance too low for transaction | Check account balance and reduce transaction amount |
+| Gas Limit Exceeded | Transaction requires more gas than specified | Increase gas limit or optimize contract call |
+| Network Timeout | Request timed out waiting for network response | Check network connectivity and increase timeout setting |
+| Invalid Address | Provided address format is incorrect | Verify address format and checksum |
+| Contract Not Found | Smart contract does not exist at specified address | Confirm contract address and network selection |
 
 ## Development
 
@@ -240,4 +230,4 @@ Contributions are welcome! Please ensure:
 
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-cronos/issues)
 - **Cronos Documentation**: [Cronos Developer Docs](https://docs.cronos.org/)
-- **Cronos Community**: [Cronos Discord](https://discord.gg/cronos)
+- **Cronos Community**: [Cronos Discord](https://discord.com/invite/cronos)
